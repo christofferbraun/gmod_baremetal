@@ -19,11 +19,7 @@ A self-contained bash script to manage a bare metal GMOD server with automatic u
 - **Max Players:** 16
 - **Gamemode:** Trouble in Terrorist Town (terrortown)
 - **Starting Map:** ttt_minecraft_b5
-- **Workshop Collections:**
-  - 3647706876
-  - 3647709812
-  - 291050771
-  - 3647716900
+- **Workshop Collection:** 3647706876
 
 ## Prerequisites
 
@@ -151,26 +147,8 @@ SRCDS_MAXPLAYERS="16"             # Max players
 SRCDS_GAMEMODE="terrortown"       # Game mode
 SRCDS_MAP="ttt_minecraft_b5"      # Starting map
 SRCDS_HOSTNAME="LAN Multi-Gamemode Server"
+WORKSHOP_COLLECTION="3647706876"  # Workshop collection ID
 ```
-
-### Adding Workshop Collections
-
-To add or modify workshop collections, edit the `start_server()` function in `gmod-server.sh`. Find the lines with `+host_workshop_collection` and add/remove/modify them:
-
-```bash
-+host_workshop_collection 3647706876 \
-+host_workshop_collection 3647709812 \
-+host_workshop_collection 291050771 \
-+host_workshop_collection 3647716900 \
-```
-
-Each collection needs its own `+host_workshop_collection` line. To add a new collection, simply add another line:
-
-```bash
-+host_workshop_collection YOUR_COLLECTION_ID \
-```
-
-Make sure to keep the backslash `\` at the end of each line except the last one.
 
 ### Steam Game Server Token
 

@@ -19,7 +19,7 @@ SRCDS_MAXPLAYERS="16"
 SRCDS_GAMEMODE="terrortown"
 SRCDS_MAP="ttt_minecraft_b5"
 SRCDS_HOSTNAME="LAN Multi-Gamemode Server"
-WORKSHOP_COLLECTIONS="3647706876,3647709812,291050771,3647716900"
+WORKSHOP_COLLECTION="3647706876"
 
 # Colors for output
 RED='\033[0;31m'
@@ -183,9 +183,8 @@ create_workshop_file() {
     mkdir -p "$lua_dir"
     
     cat > "$lua_dir/workshop.lua" << EOF
--- Workshop Collections
--- Collections are loaded via server startup parameters
--- This file is kept for reference/backup
+-- Workshop Collection
+resource.AddWorkshop("$WORKSHOP_COLLECTION")
 EOF
     
     log_info "Workshop configuration created"
@@ -196,7 +195,7 @@ start_server() {
     
     cd "$SERVER_DIR"
     
-    # Start the server with multiple workshop collections
+    # Start the server
     ./srcds_run -game garrysmod \
         -console \
         -port "$SRCDS_PORT" \
@@ -204,10 +203,7 @@ start_server() {
         +gamemode "$SRCDS_GAMEMODE" \
         +map "$SRCDS_MAP" \
         +sv_setsteamaccount "$SRCDS_TOKEN" \
-        +host_workshop_collection 3647706876 \
-        +host_workshop_collection 3647709812 \
-        +host_workshop_collection 291050771 \
-        +host_workshop_collection 3647716900 \
+        +host_workshop_collection "$WORKSHOP_COLLECTION" \
         +exec server.cfg
 }
 
