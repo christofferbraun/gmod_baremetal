@@ -36,11 +36,12 @@ A self-contained bash script to manage a bare metal GMOD server with automatic u
 
 ### Required Packages
 
-The script will check for these, but you may need to install:
+Before running the script, install the required 32-bit libraries:
 
 ```bash
+sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo apt-get install curl tar lib32gcc-s1
+sudo apt-get install -y curl tar lib32gcc-s1 lib32stdc++6 libc6-i386
 ```
 
 ## Installation
@@ -185,11 +186,11 @@ Workshop collections are configured in:
 
 ### Server won't start
 
-1. Check if you have 32-bit libraries installed:
+1. Make sure you have all required 32-bit libraries installed:
 ```bash
 sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo apt-get install lib32gcc-s1 lib32stdc++6
+sudo apt-get install -y lib32gcc-s1 lib32stdc++6 libc6-i386
 ```
 
 2. Verify server files are intact:
