@@ -182,12 +182,22 @@ create_workshop_file() {
     local lua_dir="$SERVER_DIR/garrysmod/lua/autorun/server"
     mkdir -p "$lua_dir"
     
-    cat > "$lua_dir/workshop.lua" << EOF
+    cat > "$lua_dir/workshop.lua" << 'EOF'
 -- Workshop Collections
-resource.AddWorkshop("3647706876")
-resource.AddWorkshop("3647709812")
-resource.AddWorkshop("291050771")
-resource.AddWorkshop("3647716900")
+-- This file adds all workshop collections to the server
+local collections = {
+    "3647706876",
+    "3647709812",
+    "291050771",
+    "3647716900"
+}
+
+for _, collectionId in ipairs(collections) do
+    resource.AddWorkshop(collectionId)
+end
+
+-- Print confirmation
+print("[Workshop] Loaded " .. #collections .. " workshop collections")
 EOF
     
     log_info "Workshop configuration created"
@@ -198,11 +208,10 @@ start_server() {
     
     cd "$SERVER_DIR"
     
-    # Build the command with workshop collections
-    local workshop_param=""
-    if [ -n "$WORKSHOP_COLLECTIONS" ]; then
-        workshop_param="+host_workshop_collection $WORKSHOP_COLLECTIONS"
-    fi
+    # Build the startup command
+    # Use only the first collection ID for +host_workshop_collection
+    # (additional collections are loaded via Lua autorun)
+    local first_collection=$(echo "$WORKSHOP_COLLECTIONS" | cut -d',' -f1)
     
     # Start the server
     ./srcds_run -game garrysmod \
@@ -212,7 +221,7 @@ start_server() {
         +gamemode "$SRCDS_GAMEMODE" \
         +map "$SRCDS_MAP" \
         +sv_setsteamaccount "$SRCDS_TOKEN" \
-        $workshop_param \
+        +host_workshop_collection "$first_collection" \
         +exec server.cfg
 }
 
