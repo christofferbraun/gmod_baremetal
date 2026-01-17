@@ -92,7 +92,9 @@ install_update_server() {
     mkdir -p "$INSTALL_DIR"
     
     # Run SteamCMD to install/update GMOD server
-    "$STEAMCMD_DIR/steamcmd.sh" +force_install_dir "$SERVER_DIR" \
+    # Note: force_install_dir must come BEFORE login
+    "$STEAMCMD_DIR/steamcmd.sh" \
+        +force_install_dir "$SERVER_DIR" \
         +login anonymous \
         +app_update 4020 validate \
         +quit
