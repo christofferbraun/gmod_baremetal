@@ -147,8 +147,11 @@ SRCDS_MAXPLAYERS="16"             # Max players
 SRCDS_GAMEMODE="terrortown"       # Game mode
 SRCDS_MAP="ttt_minecraft_b5"      # Starting map
 SRCDS_HOSTNAME="LAN Multi-Gamemode Server"
+SRCDS_RCON_PASSWORD="changeme123" # RCON password - CHANGE THIS!
 WORKSHOP_COLLECTION="3647706876"  # Workshop collection ID
 ```
+
+**IMPORTANT:** Change the `SRCDS_RCON_PASSWORD` to something secure before running the server!
 
 ### Steam Game Server Token
 
@@ -163,6 +166,83 @@ For public servers, you need a Steam Game Server Account token:
 Server settings can be modified in:
 ```
 ~/gmodserver/gmod/garrysmod/cfg/server.cfg
+```
+
+### Gamemode-Specific Proximity Chat Settings
+
+The server automatically loads gamemode-specific configs when you change gamemodes. These configs control Enhanced Proximity Voice Chat settings and other gamemode-specific options.
+
+Config files are located at:
+```
+~/gmodserver/gmod/garrysmod/cfg/
+```
+
+**Default gamemode configs created:**
+- `terrortown.cfg` - TTT settings (proximity enabled, 20000 radius, dead can't talk)
+- `deathrun.cfg` - Deathrun settings (proximity disabled)
+- `sandbox.cfg` - Sandbox settings (proximity enabled, 20000 radius, dead can talk)
+- `murder.cfg` - Murder settings (proximity enabled, 20000 radius, dead can't talk)
+- `jailbreak.cfg` - Jailbreak settings (proximity enabled, 20000 radius, dead can't talk)
+- `prophunt.cfg` - Prop Hunt settings (proximity enabled, 20000 radius, dead can't talk)
+
+**To customize proximity chat for a gamemode:**
+
+1. Edit the appropriate config file:
+   ```bash
+   nano ~/gmodserver/gmod/garrysmod/cfg/terrortown.cfg
+   ```
+
+2. Modify these settings:
+   ```
+   proximity_enabled 1        // 0 or 1 (off or on)
+   proximity_radius 3000      // Distance in units
+   proximity_mute 0.3         // Volume through walls (0 to 1)
+   proximity_deadtalk 0       // Can dead players talk? (0 or 1)
+   ```
+
+3. The config will auto-load when you change to that gamemode
+
+**To add a new gamemode config:**
+
+Create a new file named `GAMEMODENAME.cfg` in the cfg directory (e.g., `prophunt.cfg`, `jailbreak.cfg`).
+
+### Remote Server Control (RCON)
+
+You can control the server from your game client or computer using RCON.
+
+**From in-game (while playing on the server):**
+
+1. Open console (` key, usually tilde)
+2. Type: `rcon_password YOUR_PASSWORD`
+3. Run commands with: `rcon COMMAND`
+
+Examples:
+```
+rcon_password changeme123
+rcon changelevel ttt_67thway_v14
+rcon proximity_radius 5000
+rcon say Server restarting in 5 minutes!
+```
+
+**From your computer (using a separate RCON tool):**
+
+Download an RCON client like:
+- **mcrcon** (command line): https://github.com/Tiiffi/mcrcon
+- **GCRCON** (GUI): https://github.com/Dreae/GCRCON
+
+Example with mcrcon:
+```bash
+mcrcon -H YOUR_SERVER_IP -P 27015 -p changeme123 "changelevel gm_construct"
+```
+
+**Common RCON commands:**
+```
+changelevel MAP_NAME          // Change map
+gamemode GAMEMODE_NAME        // Change gamemode
+say MESSAGE                   // Send server message
+ulx map MAP_NAME              // Change map (if using ULX)
+status                        // Show connected players
+kick PLAYERNAME              // Kick a player
 ```
 
 ## File Locations

@@ -19,6 +19,7 @@ SRCDS_MAXPLAYERS="16"
 SRCDS_GAMEMODE="terrortown"
 SRCDS_MAP="ttt_minecraft_b5"
 SRCDS_HOSTNAME="LAN Multi-Gamemode Server"
+SRCDS_RCON_PASSWORD="changeme123"  # Change this to a secure password
 WORKSHOP_COLLECTION="3647706876"
 
 # Colors for output
@@ -165,12 +166,95 @@ sv_logecho 1
 sv_logfile 1
 sv_log_onefile 0
 
-// RCON (set a password for remote admin)
-// rcon_password "your_password_here"
+// RCON (Remote Console)
+rcon_password "$SRCDS_RCON_PASSWORD"
+sv_rcon_banpenalty 0
+sv_rcon_maxfailures 5
 
 // Execute ban files
 exec banned_user.cfg
 exec banned_ip.cfg
+EOF
+    
+    # Create gamemode-specific configs
+    log_info "Creating gamemode-specific configs..."
+    
+    # Trouble in Terrorist Town (TTT) config
+    cat > "$cfg_dir/terrortown.cfg" << EOF
+// TTT Gamemode Configuration
+echo "Loading TTT configuration..."
+
+// Enhanced Proximity Voice Chat settings for TTT
+proximity_enabled 1
+proximity_radius 20000
+proximity_mute 0.3
+proximity_deadtalk 0
+
+echo "TTT configuration loaded"
+EOF
+    
+    # Deathrun config
+    cat > "$cfg_dir/deathrun.cfg" << EOF
+// Deathrun Gamemode Configuration
+echo "Loading Deathrun configuration..."
+
+// Enhanced Proximity Voice Chat settings for Deathrun
+proximity_enabled 0
+
+echo "Deathrun configuration loaded"
+EOF
+    
+    # Sandbox config
+    cat > "$cfg_dir/sandbox.cfg" << EOF
+// Sandbox Gamemode Configuration
+echo "Loading Sandbox configuration..."
+
+// Enhanced Proximity Voice Chat settings for Sandbox
+proximity_enabled 1
+proximity_radius 20000
+proximity_mute 0.3
+proximity_deadtalk 1
+
+echo "Sandbox configuration loaded"
+EOF
+    
+    # Murder config
+    cat > "$cfg_dir/murder.cfg" << EOF
+// Murder Gamemode Configuration
+echo "Loading Murder configuration..."
+
+// Enhanced Proximity Voice Chat settings for Murder
+proximity_enabled 1
+proximity_radius 20000
+proximity_mute 0.3
+proximity_deadtalk 0
+
+echo "Murder configuration loaded"
+EOF
+    
+    # Jailbreak config
+    cat > "$cfg_dir/jailbreak.cfg" << EOF
+// Jailbreak Gamemode Configuration
+echo "Loading Jailbreak configuration..."
+
+// Enhanced Proximity Voice Chat settings for Jailbreak
+proximity_enabled 0
+
+echo "Jailbreak configuration loaded"
+EOF
+    
+    # Prop Hunt config
+    cat > "$cfg_dir/prophunt.cfg" << EOF
+// Prop Hunt Gamemode Configuration
+echo "Loading Prop Hunt configuration..."
+
+// Enhanced Proximity Voice Chat settings for Prop Hunt
+proximity_enabled 1
+proximity_radius 20000
+proximity_mute 0.3
+proximity_deadtalk 0
+
+echo "Prop Hunt configuration loaded"
 EOF
     
     log_info "Server configuration created"
@@ -185,6 +269,34 @@ create_workshop_file() {
     cat > "$lua_dir/workshop.lua" << EOF
 -- Workshop Collection
 resource.AddWorkshop("$WORKSHOP_COLLECTION")
+EOF
+
+    # Create gamemode auto-config loader
+    cat > "$lua_dir/gamemode_autoconfig.lua" << 'EOF'
+-- Auto-load gamemode-specific configs
+hook.Add("OnGamemodeLoaded", "LoadGamemodeConfig", function()
+    local gamemode = engine.ActiveGamemode()
+    local configFile = "cfg/" .. gamemode .. ".cfg"
+    
+    -- Check if the config file exists
+    if file.Exists("cfg/" .. gamemode .. ".cfg", "GAME") then
+        game.ConsoleCommand("exec " .. gamemode .. ".cfg\n")
+        print("[Auto-Config] Loaded gamemode config: " .. configFile)
+    else
+        print("[Auto-Config] No specific config found for gamemode: " .. gamemode)
+    end
+end)
+
+-- Also run on map change
+hook.Add("InitPostEntity", "LoadGamemodeConfigOnMapChange", function()
+    timer.Simple(1, function()
+        local gamemode = engine.ActiveGamemode()
+        if file.Exists("cfg/" .. gamemode .. ".cfg", "GAME") then
+            game.ConsoleCommand("exec " .. gamemode .. ".cfg\n")
+            print("[Auto-Config] Loaded gamemode config: cfg/" .. gamemode .. ".cfg")
+        end
+    end)
+end)
 EOF
     
     log_info "Workshop configuration created"
