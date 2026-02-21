@@ -257,6 +257,34 @@ proximity_deadtalk 0
 echo "Prop Hunt configuration loaded"
 EOF
     
+    # Sled Build config
+    cat > "$cfg_dir/sledbuild.cfg" << EOF
+// Sled Build Gamemode Configuration
+echo "Loading Sled Build configuration..."
+
+// Enhanced Proximity Voice Chat settings for Sled Build
+proximity_enabled 1
+proximity_radius 20000
+proximity_mute 0.3
+proximity_deadtalk 0
+
+echo "Sled Build configuration loaded"
+EOF
+    
+    # The Hidden config
+    cat > "$cfg_dir/hidden.cfg" << EOF
+// The Hidden Gamemode Configuration
+echo "Loading The Hidden configuration..."
+
+// Enhanced Proximity Voice Chat settings for The Hidden
+proximity_enabled 1
+proximity_radius 20000
+proximity_mute 0.3
+proximity_deadtalk 0
+
+echo "The Hidden configuration loaded"
+EOF
+    
     log_info "Server configuration created"
 }
 
